@@ -1,0 +1,14 @@
+# IDE
+.idea
+
+# Python
+__pycache__/
+*.egg-info/
+
+# Project
+/data/
+/models/
+/notes.txt
+/Pipfile.lock
+
+
