@@ -19,13 +19,13 @@ class Result:
         }
 
     def threshold(self, min_score):
-        index = self.scores[self.scores >= min_score]
+        index = self.scores >= min_score
         return Result(self.boxes[index],
                       self.classes[index],
                       self.scores[index])
 
     def threshold_(self, min_score):
-        index = self.scores[self.scores >= min_score]
+        index = self.scores >= min_score
         self.boxes = self.boxes[index]
         self.classes = self.classes[index]
         self.scores = self.scores[index]
