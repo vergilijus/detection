@@ -1,3 +1,5 @@
+from typing import Iterable
+
 import numpy as np
 
 
@@ -31,14 +33,25 @@ class Result:
         self.scores = self.scores[index]
         return self
 
-    def filter(self, score, classes):
-        raise NotImplementedError
+    def filter(self, classes: Iterable[int]):
+        index = [c in classes for c in self.classes]
+        return Result(self.boxes[index],
+                      self.classes[index],
+                      self.scores[index])
+
+    def filter_(self, classes: Iterable[int]):
+        index = [c in classes for c in self.classes]
+        self.boxes = self.boxes[index]
+        self.classes = self.classes[index]
+        self.scores = self.scores[index]
+        return self
 
     def nms(self, iou: float):
         raise NotImplementedError
 
 
 class Detector:
+    NAME = ''
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
