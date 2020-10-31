@@ -2,7 +2,8 @@ from detection.capture import get_capture
 from detection.detector.detector_tf import TFDetector
 import cv2 as cv
 
-from detection.drawing import plot_boxes
+from detection.drawing import draw_results
+from detection.label_map import LabelMapCOCO
 
 
 def main():
@@ -17,8 +18,9 @@ def main():
     capture = get_capture(args.capture)
 
     def detect_and_show(frame):
-        result = detector.detect(frame)
-        plot_boxes(frame, result.boxes, result.classes, result.scores)
+        result = detector.detect(frame, threshold=0.3)
+        labels = LabelMapCOCO().labels(result.classes)
+        draw_results(frame, result.boxes, result.classes, result.scores, labels)
         cv.imshow('frame', frame)
         cv.waitKey(1)
 

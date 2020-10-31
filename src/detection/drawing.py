@@ -56,23 +56,32 @@ def get_index_label(label, obj_list):
     return index
 
 
-def plot_boxes(img, boxes, classes, scores, labels=None):
+def draw_results(img, boxes, classes, scores, labels=None):
     color_list = standard_to_bgr(STANDARD_COLORS)
     labels = labels if labels else [None] * len(boxes)
     for box, class_id, score, label in zip(boxes, classes, scores, labels):
-        plot_one_box(img, box, score, label, color_list[class_id % len(color_list)])
+        draw_result(img, box, score, label, color_list[class_id % len(color_list)])
 
 
-def plot_one_box(img, box, score=None, label=None, color=None, line_thickness=None):
+def draw_result(img, box, score=None, label=None, color=None, line_thickness=None):
     tl = line_thickness or int(round(0.001 * max(img.shape[0:2])))  # line thickness
     color = color
-    c1, c2 = get_box_points(box)
-    cv.rectangle(img, c1, c2, color, thickness=tl)
+    p1, p2 = get_box_points(box)
+    cv.rectangle(img, p1, p2, color, thickness=tl)
+
+    text = ''
     if label:
-        tf = max(tl - 2, 1)  # font thickness
-        s_size = cv.getTextSize(str('{:.0%}'.format(score)), 0, fontScale=float(tl) / 3, thickness=tf)[0]
-        t_size = cv.getTextSize(label, 0, fontScale=float(tl) / 3, thickness=tf)[0]
-        c2 = c1[0] + t_size[0] + s_size[0] + 15, c1[1] - t_size[1] - 3
-        cv.rectangle(img, c1, c2, color, -1)  # filled
-        cv.putText(img, '{}: {:.0%}'.format(label, score), (c1[0], c1[1] - 2), 0, float(tl) / 3, [0, 0, 0],
-                   thickness=tf, lineType=cv.FONT_HERSHEY_SIMPLEX)
+        text = f'{label} '
+    if score:
+        text += f'{score:.0%}'
+
+    tf = max(tl - 2, 1)  # font thickness
+    text_width, text_height = cv.getTextSize(text, 0, fontScale=float(tl) / 3, thickness=tf)[0]
+    text_width += 2
+    text_height += 2
+    x1, y1 = p1
+    y1 = y1 if y1 - text_height > 0 else abs(y1 - text_height)
+    p2 = x1 + text_width, y1 - text_height
+    cv.rectangle(img, (x1, y1), p2, color, -1)  # filled
+    cv.putText(img, '{}: {:.0%}'.format(label, score), (x1, y1 - 2), 0, float(tl) / 3, [0, 0, 0],
+               thickness=tf, lineType=cv.FONT_HERSHEY_SIMPLEX)
