@@ -3,7 +3,9 @@ from detection.detector.detector_tf import TFDetector
 import cv2 as cv
 
 from detection.drawing import draw_results
-from detection.label_map import LabelMapCOCO
+from detection.label_map import COCO
+
+CACHE_DIR = 'models'
 
 
 def main():
@@ -14,12 +16,12 @@ def main():
     parser.add_argument('--capture', type=str, required=True)
     args = parser.parse_args()
 
-    detector = TFDetector(args.model)
+    detector = TFDetector(CACHE_DIR, args.model)
     capture = get_capture(args.capture)
 
     def detect_and_show(frame):
-        result = detector.detect(frame, threshold=0.3)
-        labels = LabelMapCOCO().labels(result.classes)
+        result = detector.detect(frame, threshold=0.3).filter([1])
+        labels = COCO().labels(result.classes)
         draw_results(frame, result.boxes, result.classes, result.scores, labels)
         cv.imshow('frame', frame)
         cv.waitKey(1)

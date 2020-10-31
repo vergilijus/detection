@@ -81,7 +81,6 @@ class VideoCapture(Capture):
         super().__init__(source)
         if source in [str(i) for i in range(9)]:
             source = int(source)
-        print(source)
         self.cap = cv.VideoCapture(source)
 
     def read(self) -> (bool, np.ndarray):

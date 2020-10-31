@@ -22,9 +22,12 @@ class TFDetector(Detector):
     https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
     """
 
-    def __init__(self, model, *args, **kwargs) -> None:
+    NAME = 'tf'
+    MODELS = []
+
+    def __init__(self, cache_dir, model, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.model = tf.saved_model.load(model)
+        self.model = self.load_model(cache_dir, self.NAME, model)
 
     def detect(self, img: np.ndarray, threshold) -> Result:
         img = img[:, :, ::-1]  # BGR -> RGB
@@ -47,3 +50,19 @@ class TFDetector(Detector):
         boxes = denorm_boxes(boxes, img.shape)
 
         return Result(boxes, classes, scores).threshold_(threshold)
+
+    @staticmethod
+    def load_model(cache_dir, cache_subdir, model_name):
+        import ssl
+        # noinspection PyUnresolvedReferences,PyProtectedMember
+        ssl._create_default_https_context = ssl._create_unverified_context
+        model_date = '20200711'
+        base_url = 'http://download.tensorflow.org/models/object_detection/tf2/'
+        model_dir = tf.keras.utils.get_file(fname=model_name,
+                                            origin=f'{base_url}{model_date}/{model_name}.tar.gz',
+                                            untar=True,
+                                            cache_subdir=cache_subdir,
+                                            cache_dir=cache_dir)
+        saved_model_dir = os.path.join(model_dir, 'saved_model')
+        return tf.saved_model.load(saved_model_dir)
+
