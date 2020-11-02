@@ -2,7 +2,7 @@ import json
 
 import numpy as np
 
-from detection.detector.detector import Result
+from detection.detector import Result
 
 
 def test_result_dict():

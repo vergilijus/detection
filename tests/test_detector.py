@@ -1,6 +1,6 @@
 import numpy as np
 
-from detection.detector.detector import Result
+from detection.detector import Result
 
 
 def test_threshold():

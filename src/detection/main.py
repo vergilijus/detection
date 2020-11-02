@@ -1,5 +1,5 @@
 from detection.capture import get_capture
-from detection.detector.detector_tf import TFDetector
+from detection.detector import TFDetector
 import cv2 as cv
 
 from detection.drawing import draw_results
