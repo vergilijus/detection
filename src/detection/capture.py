@@ -1,12 +1,12 @@
-import os
-import time
-from concurrent.futures import ThreadPoolExecutor
-from queue import Queue, Empty
-from typing import Callable, Tuple, Union
 import logging
+import os
+from concurrent.futures import ThreadPoolExecutor
+from queue import Empty, Queue
+from typing import Callable, Iterator, Tuple, Union
 
 import cv2 as cv
 import numpy as np
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -48,8 +48,14 @@ class Capture:
         self._on_frame = lambda _: None
         self._on_no_frame = lambda: None
 
+    def __iter__(self) -> Iterator:
+        return self
+
+    def __next__(self):
+        return self.read()
+
     def start(self):
-        while self.is_opened():
+        for _, frame in tqdm(self):
             status, frame = self.read()
             if status:
                 self._on_frame(frame)

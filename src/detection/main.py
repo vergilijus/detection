@@ -19,11 +19,16 @@ def main():
     detector = TFDetector(CACHE_DIR, args.model)
     capture = get_capture(args.capture)
 
+    cv.namedWindow('detection', cv.WINDOW_GUI_NORMAL)
+
     def detect_and_show(frame):
-        result = detector.detect(frame, threshold=0.3).filter([1])
+        result = detector.detect(frame, threshold=0.5)
         labels = COCO().labels(result.classes)
-        draw_results(frame, result.boxes, result.classes, result.scores, labels)
-        cv.imshow('frame', frame)
+        draw_results(frame, result.boxes,
+                     classes=result.classes,
+                     scores=result.scores,
+                     labels=labels)
+        cv.imshow('detection', frame)
         cv.waitKey(1)
 
     capture.on_frame(detect_and_show)
