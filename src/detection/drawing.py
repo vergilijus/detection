@@ -1,4 +1,5 @@
 import logging
+from itertools import repeat
 
 import cv2 as cv
 import webcolors
@@ -56,22 +57,30 @@ def get_index_label(label, obj_list):
     return index
 
 
-def draw_results(img, boxes, classes, scores, labels=None):
+def draw_results(img, boxes, classes=None, scores=None, labels=None, draw_classes=False):
     color_list = standard_to_bgr(STANDARD_COLORS)
-    labels = labels if labels else [None] * len(boxes)
+    classes = classes if classes is not None else repeat(None)
+    scores = scores if scores is not None else repeat(None)
+    labels = labels if labels is not None else repeat(None)
     for box, class_id, score, label in zip(boxes, classes, scores, labels):
-        draw_result(img, box, score, label, color_list[class_id % len(color_list)])
+        color = color_list[class_id % len(color_list)] if class_id else (0, 255, 0)
+        if not draw_classes:
+            class_id = None
+        draw_result(img, box, class_id, score, label, color=color)
 
 
-def draw_result(img, box, score=None, label=None, color=None, line_thickness=None):
+def draw_result(img, box, class_id=None, score=None, label=None,
+                color=None, line_thickness=None):
     tl = line_thickness or int(round(0.001 * max(img.shape[0:2])))  # line thickness
     color = color
     p1, p2 = get_box_points(box)
     cv.rectangle(img, p1, p2, color, thickness=tl)
 
     text = ''
+    if class_id:
+        text = f'{class_id} '
     if label:
-        text = f'{label} '
+        text += f'{label} '
     if score:
         text += f'{score:.0%}'
 
@@ -81,7 +90,7 @@ def draw_result(img, box, score=None, label=None, color=None, line_thickness=Non
     text_height += 2
     x1, y1 = p1
     y1 = y1 if y1 - text_height > 0 else abs(y1 - text_height)
-    p2 = x1 + text_width, y1 - text_height
+    p2 = x1 + text_width + 5, y1 - text_height - 3
     cv.rectangle(img, (x1, y1), p2, color, -1)  # filled
-    cv.putText(img, '{}: {:.0%}'.format(label, score), (x1, y1 - 2), 0, float(tl) / 3, [0, 0, 0],
-               thickness=tf, lineType=cv.FONT_HERSHEY_SIMPLEX)
+    cv.putText(img, text, (x1, y1 - 4), cv.FONT_HERSHEY_SIMPLEX, float(tl) / 3, [0, 0, 0],
+               thickness=tf, lineType=cv.LINE_AA)
