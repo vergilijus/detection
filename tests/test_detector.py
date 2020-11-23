@@ -1,13 +1,13 @@
 import numpy as np
 
-from detection.detector import Result
+from detection.detector import Detection
 
 
 def test_threshold():
     boxes = np.array([[0, 0, 1, 1], [1, 1, 2, 2], [2, 2, 3, 3], [3, 3, 4, 4]])
     classes = np.array([0, 1, 2, 3])
     scores = np.array([0.6, 0.2, 0.7, 0.1])
-    result1 = Result(boxes, classes, scores)
+    result1 = Detection(boxes, classes, scores)
     result2 = result1.threshold(0.5)
 
     assert np.all(result1.boxes == boxes)
@@ -23,7 +23,7 @@ def test_threshold_():
     boxes = np.array([[0, 0, 1, 1], [1, 1, 2, 2], [2, 2, 3, 3], [3, 3, 4, 4]])
     classes = np.array([0, 1, 2, 3])
     scores = np.array([0.6, 0.2, 0.7, 0.1])
-    result = Result(boxes, classes, scores)
+    result = Detection(boxes, classes, scores)
     result.threshold_(0.5)
 
     assert result.boxes.tolist() == [[0, 0, 1, 1], [2, 2, 3, 3]]
@@ -35,7 +35,7 @@ def test_filter():
     boxes = np.array([[0, 0, 1, 1], [1, 1, 2, 2], [2, 2, 3, 3], [3, 3, 4, 4]])
     classes = np.array([0, 1, 2, 3])
     scores = np.array([0.6, 0.2, 0.7, 0.1])
-    result = Result(boxes, classes, scores)
+    result = Detection(boxes, classes, scores)
     filtered1 = result.filter([1, 3])
     filtered2 = result.filter(np.array([1, 3]))
 

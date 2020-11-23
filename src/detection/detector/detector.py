@@ -1,9 +1,9 @@
-from typing import Iterable
+from typing import Iterable, List
 
 import numpy as np
 
 
-class Result:
+class Detection:
     """
     Represent detection result of a single image
     """
@@ -22,9 +22,9 @@ class Result:
 
     def threshold(self, min_score):
         index = self.scores >= min_score
-        return Result(self.boxes[index],
-                      self.classes[index],
-                      self.scores[index])
+        return Detection(self.boxes[index],
+                         self.classes[index],
+                         self.scores[index])
 
     def threshold_(self, min_score):
         index = self.scores >= min_score
@@ -35,9 +35,9 @@ class Result:
 
     def filter(self, classes: Iterable[int]):
         index = [c in classes for c in self.classes]
-        return Result(self.boxes[index],
-                      self.classes[index],
-                      self.scores[index])
+        return Detection(self.boxes[index],
+                         self.classes[index],
+                         self.scores[index])
 
     def filter_(self, classes: Iterable[int]):
         index = [c in classes for c in self.classes]
@@ -50,11 +50,14 @@ class Result:
         raise NotImplementedError
 
 
+Detections = List[Detection]
+
+
 class Detector:
     NAME = ''
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
 
-    def detect(self, img: np.array, threshold: float) -> Result:
+    def detect(self, img: np.array, threshold: float) -> Detection:
         raise NotImplementedError

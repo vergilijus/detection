@@ -7,7 +7,7 @@ import tensorflow as tf
 
 tf.get_logger().setLevel('ERROR')
 
-from detection.detector.detector import Detector, Result
+from detection.detector.detector import Detector, Detection
 from detection.cv_utils import denorm_boxes
 
 # Enable GPU dynamic memory allocation
@@ -29,7 +29,7 @@ class TFDetector(Detector):
         super().__init__(*args, **kwargs)
         self.model = self.load_model(cache_dir, self.NAME, model)
 
-    def detect(self, img: np.ndarray, threshold) -> Result:
+    def detect(self, img: np.ndarray, threshold) -> Detection:
         img = img[:, :, ::-1]  # BGR -> RGB
         input_tensor = tf.convert_to_tensor(img)
         input_tensor = input_tensor[tf.newaxis, ...]
@@ -49,7 +49,7 @@ class TFDetector(Detector):
         boxes = boxes[:, [1, 0, 3, 2]]
         boxes = denorm_boxes(boxes, img.shape)
 
-        return Result(boxes, classes, scores).threshold_(threshold)
+        return Detection(boxes, classes, scores).threshold_(threshold)
 
     @staticmethod
     def load_model(cache_dir, cache_subdir, model_name):
@@ -65,4 +65,3 @@ class TFDetector(Detector):
                                             cache_dir=cache_dir)
         saved_model_dir = os.path.join(model_dir, 'saved_model')
         return tf.saved_model.load(saved_model_dir)
-
