@@ -1,5 +1,5 @@
 from detection.capture import get_capture
-from detection.detector import TFDetector
+from detection.detector.detector_tf import TFDetector
 import cv2 as cv
 
 from detection.drawing import draw_results
@@ -23,7 +23,7 @@ def main():
 
     def detect_and_show(frame):
         result = detector.detect(frame, threshold=0.5)
-        labels = COCO().labels(result.classes)
+        labels = COCO().to_labels(result.classes)
         draw_results(frame, result.boxes,
                      classes=result.classes,
                      scores=result.scores,

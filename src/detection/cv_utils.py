@@ -27,3 +27,17 @@ def scale_boxes(boxes: np.ndarray, src_shape, dst_shape) -> np.ndarray:
     return boxes * np.array([wk, hk, wk, hk])
 
 
+def boxes_to_yolo(boxes: np.ndarray):
+    """
+    Convert boxes from format [xmin, ymin, xmax, ymax] to [cx, xy, width, height]
+    :param boxes: boxes in format [xmin, ymin, xmax, ymax]
+    :return: boxes in format [cx, cy, width, height]
+    """
+    yolo_boxes = np.zeros_like(boxes)
+    w = boxes[:, 2] - boxes[:, 0]
+    h = boxes[:, 3] - boxes[:, 1]
+    yolo_boxes[:, 2] = boxes[:, 2] - boxes[:, 0]
+    yolo_boxes[:, 3] = boxes[:, 3] - boxes[:, 1]
+    yolo_boxes[:, 0] = boxes[:, 0] + w / 2
+    yolo_boxes[:, 1] = boxes[:, 1] + h / 2
+    return yolo_boxes

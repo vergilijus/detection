@@ -2,6 +2,8 @@ from typing import Iterable, List
 
 import numpy as np
 
+from detection.cv_utils import denorm_boxes
+
 
 class Detection:
     """
@@ -44,6 +46,10 @@ class Detection:
         self.boxes = self.boxes[index]
         self.classes = self.classes[index]
         self.scores = self.scores[index]
+        return self
+
+    def denorm(self, shape):
+        self.boxes = denorm_boxes(self.boxes, shape)
         return self
 
     def nms(self, iou: float):

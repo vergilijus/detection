@@ -1,6 +1,10 @@
 from time import time
 
 
+def get_base_name(path):
+    return path.rsplit('.', 1)[0]
+
+
 def download(url, file):
     from urllib.request import urlretrieve
     from tqdm import tqdm
