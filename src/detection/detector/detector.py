@@ -62,7 +62,7 @@ Detections = List[Detection]
 class Detector:
     NAME = ''
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
     def detect(self, img: np.array, threshold: float) -> Detection:

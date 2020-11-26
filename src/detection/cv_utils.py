@@ -1,6 +1,16 @@
 import numpy as np
 
 
+class Box:
+
+    def __init__(self, xmin, ymin, xmax, ymax) -> None:
+        self.box = np.array([xmin, ymin, xmax, ymax])
+
+    def points(self):
+        x1, y1, x2, y2 = self.box
+        return (x1, y1), (x2, y2)
+
+
 def denorm_boxes(boxes: np.ndarray, shape) -> np.ndarray:
     """
     Denormalize boxes to required shape

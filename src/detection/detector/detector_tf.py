@@ -25,8 +25,8 @@ class TFDetector(Detector):
     NAME = 'tf'
     MODELS = []
 
-    def __init__(self, cache_dir, model, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, cache_dir, model) -> None:
+        super().__init__()
         self.model = self.load_model(cache_dir, self.NAME, model)
 
     def detect(self, img: np.ndarray, threshold) -> Detection:
