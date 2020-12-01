@@ -1,4 +1,4 @@
-from detection.cv_utils import denorm_boxes, scale_boxes, boxes_to_yolo
+from detection.cv_utils import Box, bbox_of_boxes, denorm_boxes, scale_boxes, boxes_to_yolo
 import numpy as np
 
 
@@ -25,3 +25,8 @@ def test_box_to_yolo():
     yolo_box2 = [15, 30, 10, 20]
     yolo_boxes = np.array([yolo_box1, yolo_box2])
     assert np.all(yolo_boxes == boxes_to_yolo(boxes))
+
+
+def test_bbox_of_boxes():
+    boxes = [Box(0, 1, 2, 3), Box(3, 4, 5, 6), Box(7, 8, 9, 10)]
+    assert all(bbox_of_boxes(boxes).box == [0, 1, 9, 10])

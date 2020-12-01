@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 
 
@@ -27,6 +29,9 @@ class Box:
     def int(self):
         self.box = self.box.astype(int)
         return self
+
+
+Boxes = List[Box]
 
 
 def norm_boxes(boxes: np.ndarray, shape) -> np.ndarray:
@@ -80,3 +85,18 @@ def boxes_to_yolo(boxes: np.ndarray):
     yolo_boxes[:, 0] = boxes[:, 0] + w / 2
     yolo_boxes[:, 1] = boxes[:, 1] + h / 2
     return yolo_boxes
+
+
+def bbox(boxes: np.ndarray) -> np.ndarray:
+    """
+    Return bounding box of bounding boxes
+    """
+    x1 = boxes[:, 0]
+    y1 = boxes[:, 1]
+    x2 = boxes[:, 2]
+    y2 = boxes[:, 3]
+    return np.array([np.min(x1), np.min(y1), np.max(x2), np.max(y2)])
+
+
+def bbox_of_boxes(boxes: List[Box]) -> Box:
+    return Box(*bbox(np.array([b.box for b in boxes])))
