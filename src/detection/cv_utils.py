@@ -10,6 +10,35 @@ class Box:
         x1, y1, x2, y2 = self.box
         return (x1, y1), (x2, y2)
 
+    def p1(self):
+        return tuple(self.box[:2])
+
+    def p2(self):
+        return tuple(self.box[2:])
+
+    def norm(self, h, w):
+        self.box = norm_boxes(self.box, (h, w))
+        return self
+
+    def denorm(self, h, w):
+        self.box = denorm_boxes(self.box, (h, w))
+        return self
+
+    def int(self):
+        self.box = self.box.astype(int)
+        return self
+
+
+def norm_boxes(boxes: np.ndarray, shape) -> np.ndarray:
+    """
+    Normalize boxes coordinates from given shape to [0, 1]
+    :param boxes: numpy array of shape (n_boxes, 4) box format [xmin, ymin, xmax, ymax]
+    :param shape: original image shape in format (height, width) or (height, width, channel)
+    :return: normalized boxes
+    """
+    h, w = shape[:2]
+    return boxes / np.array([w, h, w, h])
+
 
 def denorm_boxes(boxes: np.ndarray, shape) -> np.ndarray:
     """
